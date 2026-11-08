@@ -34,6 +34,7 @@ PRIMEIRO_ITEM_S = 2.2      # o primeiro preço "chega" depois disso
 ENTRE_ITENS_S = 1.5        # e os seguintes, um a um
 VARIACAO_S = 0.9
 REPESQUISA_S = (3.5, 5.0)  # "Responder" / "Pesquisar de novo"
+CUSTO_ITEM_MEDIDO_USD = 0.006337 / 9   # pesquisa real add3092e (08/11): US$ 0,006337 para 9 itens
 
 
 def _qtd(q: float | None) -> str | None:
@@ -81,9 +82,11 @@ def custos_das_origens(sb, orcamento_ids: set[str]) -> dict[str, float]:
     saida = {}
     for o in r.data or []:
         try:
-            saida[str(o["id"])] = float(o.get("custo_usd") or 0) / max(int(o.get("qtd_itens") or 1), 1)
+            por_item = float(o.get("custo_usd") or 0) / max(int(o.get("qtd_itens") or 1), 1)
         except (TypeError, ValueError):
-            continue
+            por_item = 0.0
+        # origem sem custo (uma reprodução anterior gravada antes desta conta): custo medido da pesquisa real
+        saida[str(o["id"])] = por_item or CUSTO_ITEM_MEDIDO_USD
     return saida
 
 
