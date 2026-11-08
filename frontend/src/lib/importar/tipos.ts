@@ -92,4 +92,8 @@ export const LIMITE_ITENS = 100_000;
 /** Itens por ORÇAMENTO enviado (igual a LIMITE_ITENS de src/rotas_orcamentos.py). O leitor aceita até 100.000 (LIMITE_ITENS)
  *  (TC-084, 50 mil linhas), mas a lista da tela e o envio param aqui, para a tela não travar e o servidor não recusar. */
 export const LIMITE_ITENS_ORCAMENTO = 5000;
+/** Itens que a IA pesquisa por envio (igual a pesquisa_max_itens de src/config.py). A lista pode ter mais (um modelo
+ *  IFC chega a centenas de linhas), mas o envio fica bloqueado: a pesquisa inteira roda dentro dos 300 s da função e,
+ *  medido em 08/11, 321 itens terminaram com 94 em "erro" por tempo e total R$ 0. */
+export const LIMITE_ITENS_PESQUISA = 80;
 export const LIMITE_TEXTO = 2000;

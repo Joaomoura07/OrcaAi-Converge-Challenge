@@ -94,6 +94,20 @@ describe("lista de revisão", () => {
     expect(trocar.linhas.map((l) => l.id)).toEqual(["x"]);
   });
 
+  it("manter_primeiras corta a lista e libera as sugestões e os toques das linhas cortadas", () => {
+    const linhas = ["a", "b", "c", "d"].map((id) => ({ id, descricao: id, quantidade: "1", unidade: "un", categoria: "" }));
+    const comp = { ...linhas[3], sugerida: { sugestaoId: "s1", regra: "r", motivo: "m", origemLinhas: [], estimativaConsumo: true } };
+    const base: EstadoLista = {
+      ...rodar([{ tipo: "importar", linhas: [...linhas.slice(0, 3), comp] as never, como: "substituir" }, { tipo: "revelar_erros" }]),
+      decisoes: { s1: "aceita", s2: "recusada" },
+    };
+    const depois = reduzir(base, { tipo: "manter_primeiras", quantidade: 2 });
+    expect(depois.linhas.map((l) => l.id)).toEqual(["a", "b"]);
+    expect(Object.keys(depois.tocados).every((k) => k.startsWith("a:") || k.startsWith("b:"))).toBe(true);
+    expect(depois.decisoes).toEqual({ s2: "recusada" });
+    expect(reduzir(depois, { tipo: "manter_primeiras", quantidade: 2 })).toBe(depois);
+  });
+
   it("revelar_erros marca todos os campos e primeiroErro segue a ordem da lista", () => {
     const e = rodar([
       { tipo: "adicionar", id: "a" },

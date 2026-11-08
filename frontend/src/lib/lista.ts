@@ -54,6 +54,7 @@ export type Acao =
   | { tipo: "adicionar"; id: string }
   | { tipo: "editar"; id: string; campo: Campo; valor: string }
   | { tipo: "remover"; id: string }
+  | { tipo: "manter_primeiras"; quantidade: number }
   | { tipo: "tocar"; id: string; campo: Campo }
   | { tipo: "revelar_erros" }
   | { tipo: "alternar_modo"; modo: ModoEntrada }
@@ -94,6 +95,17 @@ export function reduzir(estado: EstadoLista, acao: Acao): EstadoLista {
       const decisoes = { ...estado.decisoes };
       if (sugestaoId) delete decisoes[sugestaoId];
       return { ...estado, linhas: estado.linhas.filter((l) => l.id !== acao.id), tocados, decisoes };
+    }
+    case "manter_primeiras": {
+      // Corta a lista nas N primeiras linhas, com a mesma limpeza de "remover" para cada linha cortada.
+      if (estado.linhas.length <= acao.quantidade) return estado;
+      const cortadas = estado.linhas.slice(Math.max(0, acao.quantidade));
+      const ids = new Set(cortadas.map((l) => l.id));
+      const tocados = { ...estado.tocados };
+      for (const k of Object.keys(tocados)) if (ids.has(k.slice(0, k.indexOf(":")))) delete tocados[k];
+      const decisoes = { ...estado.decisoes };
+      for (const l of cortadas) if (l.sugerida?.sugestaoId) delete decisoes[l.sugerida.sugestaoId];
+      return { ...estado, linhas: estado.linhas.slice(0, Math.max(0, acao.quantidade)), tocados, decisoes };
     }
     case "tocar":
       return { ...estado, tocados: { ...estado.tocados, [chaveToque(acao.id, acao.campo)]: true } };
