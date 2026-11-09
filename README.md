@@ -16,6 +16,13 @@ de especificação, onde comprar e se cabe no orçamento do cliente.
 - **API:** https://orcaapijndbjdfvk.vercel.app (`/health`, `/docs`)
 - **Demonstração:** [roteiro dos exemplos para os jurados](frontend/public/exemplos/demo/ROTEIRO.md). Comece pelo `teste_1`: de três a cinco materiais especificados, sem preços pré-preenchidos.
 
+> **Situação depois do hackathon:** o site continua no ar, mas a pesquisa de preços **provavelmente não vai mais
+> funcionar**. As chaves de API usadas no evento (créditos da Featherless e cotas gratuitas do Tavily) estão expirando
+> e não serão renovadas. Sem elas, o agente não consegue chamar o LLM nem buscar nas lojas, e o envio para a IA
+> termina com os itens em erro ou sem preço. A importação da lista e a tabela editável rodam no navegador e não
+> dependem dessas chaves. Para ver o agente funcionando de ponta a ponta, rode o projeto localmente com chaves
+> próprias (veja [Rodar localmente](#rodar-localmente)).
+
 ## O problema
 
 Montar orçamento e estudo de viabilidade é trabalho manual: a lista sai do Revit, do SketchUp ou de uma planilha, e o
@@ -128,6 +135,7 @@ Lista completa em [`.env.example`](.env.example). **Nunca** faça commit do `.en
 
 ## Limites conhecidos
 
+- No site publicado, a pesquisa depende das chaves de API do evento, que estão expirando: o agente pode não responder.
 - Frete por CEP está em pausa (`FRETE_ATIVO`): o resultado diz "frete a confirmar".
 - Item fora das lojas pesquisadas pode sair sem preço confirmado; nesses casos a tela mostra o motivo e oferece
   "Pesquisar de novo".
